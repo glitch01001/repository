@@ -1,0 +1,31 @@
+File to edit
+
+~/.config/omarchy/themes/aetheria/colors.toml
+
+Change 1 — cursor color was invisible against text
+
+Add this line (it doesn't exist yet in the unfixed file):
+bright_foreground = "#ffffff"
+Why: Every Omarchy template (Ghostty, Kitty, Alacritty, Neovim's aether.nvim plugin, Helix, VS Code) uses the derived field bright_foreground as the cursor color. Aetheria never set it, so it fell back to color15 = #11AEB3 — which is ~98% identical to foreground = #14B9B5 (the normal text color). Setting it explicitly to white fixes the cursor everywhere at once.
+
+Change 2 — terminal selection matched the text color exactly
+
+Find:
+selection_background = "#14B9B5"
+Change to:
+selection_background = "#c53253"
+Why: This was byte-for-byte identical to foreground, so selecting/highlighting default-colored text made the highlight invisible. #c53253 is the theme's own "muted" color (color8), which is Omarchy's own conventional default for this field.
+
+Optional, cosmetic-only — neovim.lua
+
+This file is currently not loaded at all on either system (Omarchy discards a git-cloned theme's own neovim.lua/terminal configs and regenerates from colors.toml instead — you'll see "Ignored in ...: neovim.lua" when you run theme set). So this edit has zero visible effect today; it only matters if you ever fork the theme into a plain (non-git) directory, at which point the file would become live. Skip it unless you want to be thorough:
+
+In ~/.config/omarchy/themes/aetheria/neovim.lua, three lines use bg = colors.hex_9147a8 (the same purple as Statement/Keyword/Tag text) for Cursor, IncSearch, and WildMenu. Change just those three bg values to colors.hex_C8E967 instead.
+
+Apply it
+
+omarchy theme set aetheria
+omarchy restart terminal
+Then restart Neovim (quit/reopen) so LazyVim reloads the aether.nvim plugin with the new colors.
+
+That's the whole fix — 2 required line changes in colors.toml, one command to regenerate, one to reload the terminal.
